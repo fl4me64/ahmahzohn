@@ -1,0 +1,31 @@
+{
+  "name": "ahmahzohn",
+  "version": "1.0.0",
+  "description": "E-commerce application built with the MERN stack",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node backend/server.js",
+    "server": "nodemon backend/server.js",
+    "client": "npm start --prefix frontend",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fl4me64/ahmahzohn.git"
+  },
+  "author": "fl4me",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/fl4me64/ahmahzohn/issues"
+  },
+  "homepage": "https://github.com/fl4me64/ahmahzohn#readme",
+  "dependencies": {
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "dotenv": "^16.4.7",
+    "nodemon": "^3.1.9"
+  }
+}
