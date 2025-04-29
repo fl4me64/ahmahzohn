@@ -1,28 +1,35 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { Link } from 'react-router-dom'
-import { Row, Col, Image, ListGroup, Card, Button} from 'react-bootstrap'
+import { Form, Row, Col, Image, ListGroup, Card, Button} from 'react-bootstrap'
 import Rating from '../components/Rating'
-import axios from 'axios'
+import Loader from '../components/Loader'
+import Message from '../components/Message'
+import { useGetProductDetailsQuery } from '../slices/productsApiSlice'
 
 const ProductScreen = () => {
-  const [product, setProduct] = useState({})
-
   const { id: productId } = useParams()
 
-  useEffect(() => {
-    const fetchProduct = async() => {
-      const { data } = await axios.get(`/api/products/${productId}`)
-      setProduct(data)
-    }
+  const [qty, setQty] = useState(1)
 
-    fetchProduct()
-  }, [productId])
-
-  return <>
+  const {
+    data: product,
+    isLoading,
+    error,
+  } = useGetProductDetailsQuery(productId)
+  
+  // console.log([...Array(product.countInStock).keys()])
+  
+  return (
+  <>
     <Link className='btn btn-light my-3' to='/'>Go back</Link>
 
-    <Row>
+    { isLoading ? (
+      <Loader />
+    ) : error ? (
+        <Message variant='danger'>{ error?.data?.message || error.error }</Message>
+    ) : (
+      <Row>
       <Col md={5}>
         <Image src={product.image} alt={product.name} fluid />
       </Col>
@@ -56,11 +63,28 @@ const ProductScreen = () => {
               </Row>
             </ListGroup.Item>
 
+            {product.countInStock > 0 && (
+              <ListGroup.Item>
+                <Row>
+                  <Col>Qty</Col>
+                  <Col>
+                    <Form.Control
+                      as='select'
+                      value={qty}
+                      onChange={(e) => setQty(Number(e.target.value))}>
+                      {[...Array(product.countInStock).keys()] }
+                      </Form.Control>
+                  </Col>
+                </Row>
+              </ListGroup.Item>
+            )}
+
             <ListGroup.Item>
               <Button
                 className='btn-block'
                 type='button'
-                disabled={product.countInStock === 0}>
+                disabled={product.countInStock === 0}
+                >
                   Add to cart
               </Button>
             </ListGroup.Item>
@@ -68,6 +92,7 @@ const ProductScreen = () => {
         </Card>
       </Col>
     </Row>
-  </>
+    )}   
+  </>)
   }
   export default ProductScreen
